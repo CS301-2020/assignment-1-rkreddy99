@@ -4,12 +4,12 @@ An example Makefile is provided. Modify it to compile your shell. Dummy files sh
 
 
 # Commands supported
-ls (no flags) dir(s)
-grep (no flags) pattern, files(s)
-cat (no flags) file(s)
-mv (no flags) file to dir / files to dir / dir to dir
-cp (no flags) file to file / files to dir/ dir to dir
-pwd (no flags) dir
-rm [-r] file(s) / dir(s)
-chmod (no flags)
-mkdir (no flags) dir(s)
+* ls (no flags) dir(s)
+* grep (no flags) pattern, files(s)
+* cat (no flags) file(s)
+* mv (no flags) file to dir / files to dir / dir to dir
+* cp (no flags) file to file / files to dir/ dir to dir
+* pwd (no flags) dir
+* rm [-r] file(s) / dir(s)
+* chmod (no flags)
+* mkdir (no flags) dir(s)
