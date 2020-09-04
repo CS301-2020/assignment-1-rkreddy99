@@ -15,8 +15,10 @@
 #include "mkdir.h"
 #include "mv.h"
 #include "cp.h"
+#include "rm.h"
+#include "chmod.h"
 
-void read_command(char cmd[], char *par[], int *fin){
+void read_line(char cmd[], char *par[], int *fin, char *str_cmd){
 	int i=0, j=0;
 	char *array[100], *args;
 
@@ -52,6 +54,7 @@ void read_command(char cmd[], char *par[], int *fin){
 	if (position==1){
 		return;
 	}
+	strcpy(str_cmd, buffer);
 	args = strtok(buffer," ");
 
 	while(args!=NULL) {
@@ -69,15 +72,14 @@ void read_command(char cmd[], char *par[], int *fin){
 
 int main(int argc, char const *argv[])
 {
-	char cmd[100], command [100], *parameters[20];
+	char cmd[100], command [100], *parameters[20], str_command[1024];
 	int end, last;
-	char *envp[] = { (char *) "PATH=/bin", 0 };
 
 	int bckgrnd = 0;
 	printf(">>");
 
 	while(1) {
-		read_command( command, parameters, &end);
+		read_line( command, parameters, &end, str_command);
 		bool bck = false;
 		if(!strcmp(parameters[end], "&")) bck=true;
 		if(bck) last = end - 1;
@@ -95,13 +97,15 @@ int main(int argc, char const *argv[])
 				if(!check) printf("changed to %s\n", getcwd(curr_dir, 100));
 				else printf("ERROR: unable to change the directory\n");
 			}
+			if(!strcmp(command, "exit")){
+				exit(0);
+			}
 			if(!bck){
-				printf("waiting for child to finish\n");
+				// printf("waiting for child to finish\n");
 				waitpid(-1, NULL, 0);
 			}
 		}
 		else if (pid==0) {
-			// printf("executing the child\n");
 			if( !strcmp(command,"ls")){
 				if(last==0){
 					lsdir(".");
@@ -143,6 +147,7 @@ int main(int argc, char const *argv[])
 
 				if( last<2 ){
 					printf("ERROR: insufficient args, needed source file(s) and target dir/file\n");
+					printf(">>");
 					exit(1);
 				}
 
@@ -156,6 +161,7 @@ int main(int argc, char const *argv[])
 				}
 				if(last>=3 && !checklast){
 					printf("ERROR: trying to copy multiple things to a file\n");
+					printf(">>");
 					exit(1);
 				}
 				for(int q=1; q<last; q++){
@@ -173,6 +179,7 @@ int main(int argc, char const *argv[])
 			else if (!strcmp(command, "mv")){
 				if(last<2){
 					printf("ERROR: need one file and one directory\n");
+					printf(">>");
 					exit(1);
 				}
 				for(int q=1; q<last; q++){
@@ -211,6 +218,7 @@ int main(int argc, char const *argv[])
 					printf("%s\n", parameters[1]);
 					if(strcmp(parameters[1], "-r")){
 						printf("ERROR: Check the flags\n");
+						printf(">>");
 						exit(1);
 					}
 					int d = remdir(parameters[2]);
@@ -218,12 +226,21 @@ int main(int argc, char const *argv[])
 					else printf("couldn't remove %s\n", parameters[2]);
 				}
 			}
+			else if(!strcmp(command, "chmod")) {
+				if (last<2) {
+					printf("Error: insufficient arguments\n");
+					printf(">>");
+					exit(1);
+				}
+				cmod(parameters[1], parameters[2]);
+			}
+
+			else if(!strcmp(command, "exit")) {
+				exit(0);
+			}
 			else if(strcmp(command,"cd")){
-				strcpy(cmd, "/bin/");
-				strcat(cmd, command);
-				printf("%s\n", cmd);
-				printf("%s\n", *parameters);
-				execve(cmd, parameters, envp);
+				system(str_command);
+				printf("hamayya\n");
 			}
 			// printf("exiting the child\n");
 			printf(">>");
