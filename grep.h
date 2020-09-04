@@ -15,5 +15,5 @@ int match(char *pat, char *file_name){
 		}
 	}
 	fclose(fp);
-	printf("%s occured %d times\n", pat, count);
+	printf("%s occured %d times in %s\n", pat, count, file_name);
 }

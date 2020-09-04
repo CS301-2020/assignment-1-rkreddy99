@@ -1,27 +1,12 @@
-// int makedir(char *dirname){
-// 	int check; 
-//     check = mkdir(dirname,0777); 
-//     if (!check) 
-//         printf("%s created\n", dirname); 
-//     else { 
-//         printf("ERROR: Unable to create directory or the dir already exists\n"); 
-//     }
-//     return 0; 
-// }
-
 int copy_file_to_file(char *source_file, char *target_file){
 	char ch;
 	FILE *source, *target;
-
-	// char *source_file = parameters[1];
 
 	source = fopen(source_file, "r");
 
 	if( source == NULL ){
 		printf("ERROR: unable to open %s\n", source_file);
 	}
-
-	// char *target_file = parameters[2];
 
 	target = fopen(target_file, "w");
 
@@ -76,13 +61,6 @@ int copy_file_to_dir(char *curr_file, char *final_dir){
 	}
 	fclose(curr);
 	fclose(final);
-	// int del = remove(curr_file);
-	// if(!del){
-	// 	printf("moved %s to %s\n", curr_file_name, final_dir);
-	// }
-	// else{
-	// 	printf("unable to move %s to %s\n", curr_file_name, final_dir);
-	// }
 	return 0;
 }
 

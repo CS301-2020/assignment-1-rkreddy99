@@ -11,7 +11,6 @@ int viewfile(const char *file_name)
 		puts(str);
 	}
 	while(fgets(str,max_len-1,fp)) {
-		// fgets(str,max_len-1,fp);
 		printf("%s",str);
 	}
 	fclose(fp);

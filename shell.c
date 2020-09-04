@@ -19,12 +19,10 @@
 #include "chmod.h"
 
 void read_line(char cmd[], char *par[], int *fin, char *str_cmd){
-	int i=0, j=0;
 	char *array[100], *args;
-
-	int bufsize = 1024;
-	int position = 0;
-	char *buffer = malloc(sizeof(char) * bufsize);
+	int buflen = 1024;
+	int position = 0, i=0, j=0;
+	char *buffer = malloc(sizeof(char) * buflen);
 	int c;
 
 	if (!buffer) {
@@ -42,9 +40,9 @@ void read_line(char cmd[], char *par[], int *fin, char *str_cmd){
 		}
 		position++;
 		// reallocate the buffer, if needed.
-		if (position >= bufsize) {
-			bufsize += 1024;
-			buffer = realloc(buffer, bufsize);
+		if (position >= buflen) {
+			buflen += 1024;
+			buffer = realloc(buffer, buflen);
 			if (!buffer) {
 			fprintf(stderr, "lsh: allocation error\n");
 			exit(EXIT_FAILURE);
