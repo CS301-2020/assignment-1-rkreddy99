@@ -89,7 +89,6 @@ int main(int argc, char const *argv[])
 			printf("error occured while forking\n");
 		}
 		else if( pid > 0 ){
-			printf("in the parent\n");
 			if(!strcmp(command, "cd")){
 				char curr_dir[100];
 				char *new_dir = parameters[1];
@@ -240,7 +239,6 @@ int main(int argc, char const *argv[])
 			}
 			else if(strcmp(command,"cd")){
 				system(str_command);
-				printf("hamayya\n");
 			}
 			// printf("exiting the child\n");
 			printf(">>");

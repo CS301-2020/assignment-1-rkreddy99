@@ -1,14 +1,9 @@
-all: build
+all:shell
 
-build: binaries
-  @echo "Building"
-  gcc shell.c -o shell
-
-binaries:
-  @echo "Building ls..."
-  gcc ls.c -o ls
+shell: shell.c
+	@echo "Building"
+	gcc -o shell shell.c
 
 clean:
-  @echo "Cleaning"
-  rm ls
-  rm shell
+	@echo "Cleaning.."
+	rm shell
