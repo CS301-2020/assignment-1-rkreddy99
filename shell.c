@@ -17,9 +17,8 @@
 #include "cp.h"
 
 void read_command(char cmd[], char *par[], int *fin){
-	// char line[1024];
 	int i=0, j=0;
-	char *array[100], *pch;
+	char *array[100], *args;
 
 	int bufsize = 1024;
 	int position = 0;
@@ -32,10 +31,7 @@ void read_command(char cmd[], char *par[], int *fin){
 	}
 
 	while (1) {
-	// Read a character
 		c = getchar();
-
-		// If we hit EOF, replace it with a null character and return.
 		if (c == EOF || c == '\n') {
 		  buffer[position] = '\0';
 		  break;
@@ -43,8 +39,7 @@ void read_command(char cmd[], char *par[], int *fin){
 		  buffer[position] = c;
 		}
 		position++;
-
-		// If we have exceeded the buffer, reallocate.
+		// reallocate the buffer, if needed.
 		if (position >= bufsize) {
 			bufsize += 1024;
 			buffer = realloc(buffer, bufsize);
@@ -54,78 +49,22 @@ void read_command(char cmd[], char *par[], int *fin){
 			}
 		}
 	}
-
 	if (position==1){
 		return;
 	}
-	// printf("%s buffer\n", buffer);
-	pch = strtok(buffer," ");
+	args = strtok(buffer," ");
 
-	while(pch!=NULL) {
-		// printf("%s pch\n", pch);
-		array[i++] = strdup(pch);
-		pch = strtok(NULL, " ");
+	while(args!=NULL) {
+		array[i++] = strdup(args);
+		args = strtok(NULL, " ");
 	}
-	// printf("%s array\n", array[1]);
-
 	strcpy(cmd, array[0]);
 
 	for (int j=0; j<i; j++){
 		par[j] = array[j];
 	}
-	// printf("%s par\n", par[1]);
 	par[i] = NULL;
 	*fin = i-1;
-}
-
-int remdir(const char *path) {
-  DIR *dr = opendir(path);
-  int check1 = -1;
-  int pathlen = strlen(path);
-
-  if (dr==NULL) {
-    printf("Could not open %s\n", path);
-    return -1;
-  }
-  if(dr!=NULL){
-    struct dirent *de;
-
-    check1 = 0;
-    while((de = readdir(dr)) && !check1){
-      int check2 = -1;
-      int length;
-      char *file_path;
-
-      if(!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..") ){
-              continue;
-          }
-      length = pathlen + strlen(de->d_name) + 2;
-      file_path = malloc(length);
-
-      if (file_path){
-        struct stat path_stat;
-        snprintf(file_path, length, "%s/%s", path, de->d_name);
-        if(!stat(file_path, &path_stat)){
-          if(S_ISDIR(path_stat.st_mode)){
-            printf("removing dir %s\n", file_path);
-            check2 = remdir(file_path);
-          }
-          else{
-            printf("removing file %s\n", file_path);
-            check2 = remove(file_path);
-          }
-        }
-        free(file_path);
-      }
-      check1 = check2;
-    }
-    closedir(dr);
-  }
-  if(!check1){
-    check1 = rmdir(path);
-  }
-  return check1;
-
 }
 
 int main(int argc, char const *argv[])
@@ -160,12 +99,10 @@ int main(int argc, char const *argv[])
 				printf("waiting for child to finish\n");
 				waitpid(-1, NULL, 0);
 			}
-			// wait(NULL);
 		}
 		else if (pid==0) {
-			printf("executing the child\n");
+			// printf("executing the child\n");
 			if( !strcmp(command,"ls")){
-				// delay(5);
 				if(last==0){
 					lsdir(".");
 			    }
@@ -205,7 +142,7 @@ int main(int argc, char const *argv[])
 			else if(!strcmp(command, "cp")){
 
 				if( last<2 ){
-					printf("insufficient args: needed source file(s) and target dir/file\n");
+					printf("ERROR: insufficient args, needed source file(s) and target dir/file\n");
 					exit(1);
 				}
 
@@ -218,7 +155,7 @@ int main(int argc, char const *argv[])
 					}	
 				}
 				if(last>=3 && !checklast){
-					printf("trying to copy multiple things to a file\n");
+					printf("ERROR: trying to copy multiple things to a file\n");
 					exit(1);
 				}
 				for(int q=1; q<last; q++){
@@ -235,7 +172,7 @@ int main(int argc, char const *argv[])
 
 			else if (!strcmp(command, "mv")){
 				if(last<2){
-					printf("need one file and one directory\n");
+					printf("ERROR: need one file and one directory\n");
 					exit(1);
 				}
 				for(int q=1; q<last; q++){
@@ -266,14 +203,14 @@ int main(int argc, char const *argv[])
 							else printf("couldn't remove %s\n", comp_file_name);
 						}
 						else{
-							printf("directory should be removed using -r flag\n");
+							printf("ERROR: directory should be removed using -r flag\n");
 						}
 					}
 				}
 				else if(i==3){
 					printf("%s\n", parameters[1]);
 					if(strcmp(parameters[1], "-r")){
-						printf("Check the flags\n");
+						printf("ERROR: Check the flags\n");
 						exit(1);
 					}
 					int d = remdir(parameters[2]);
