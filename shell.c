@@ -1,3 +1,12 @@
+////////////////////////////////////////////////////////////////////
+/*
+
+Rama Krishna Reddy - 17110094
+krishna.reddy@iitgn.ac.in
+
+*/
+////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
@@ -31,7 +40,7 @@ void read_line(char cmd[], char *par[], int *fin, char *str_cmd){
 	}
 
 	while (1) {
-		c = getchar();
+		c = getchar();    // read a char from the terminal.
 		if (c == EOF || c == '\n') {
 		  buffer[position] = '\0';
 		  break;
@@ -52,8 +61,8 @@ void read_line(char cmd[], char *par[], int *fin, char *str_cmd){
 	if (position==1){
 		return;
 	}
-	strcpy(str_cmd, buffer);
-	args = strtok(buffer," ");
+	strcpy(str_cmd, buffer); // copy the while line as a string to str_cmd, to run system calls.
+	args = strtok(buffer," "); // tokenise wrt to " "
 
 	while(args!=NULL) {
 		array[i++] = strdup(args);
@@ -65,7 +74,7 @@ void read_line(char cmd[], char *par[], int *fin, char *str_cmd){
 		par[j] = array[j];
 	}
 	par[i] = NULL;
-	*fin = i-1;
+	*fin = i-1; // store the number of parameters
 }
 
 int main(int argc, char const *argv[])
@@ -77,17 +86,17 @@ int main(int argc, char const *argv[])
 	printf(">>");
 
 	while(1) {
-		read_line( command, parameters, &end, str_command);
-		bool bck = false;
+		read_line( command, parameters, &end, str_command); // read terminal
+		bool bck = false;   // check for running in background
 		if(!strcmp(parameters[end], "&")) bck=true;
 		if(bck) last = end - 1;
 		else last = end;
-		int pid = fork();
+		int pid = fork();   
 		if(pid == -1){
 			printf("error occured while forking\n");
 		}
 		else if( pid > 0 ){
-			if(!strcmp(command, "cd")){
+			if(!strcmp(command, "cd")){        // cd command
 				char curr_dir[100];
 				char *new_dir = parameters[1];
 				int check = chdir(new_dir);
@@ -98,8 +107,9 @@ int main(int argc, char const *argv[])
 				exit(0);
 			}
 			if(!bck){
+				// if bck then dont wait for child to finish else wait
 				// printf("waiting for child to finish\n");
-				waitpid(-1, NULL, 0);
+				waitpid(-1, NULL, 0);  
 			}
 		}
 		else if (pid==0) {
@@ -115,6 +125,7 @@ int main(int argc, char const *argv[])
 			else if( !strcmp(command, "grep")){
 				if(last<2){
 					printf("ERROR: give pattern name at least 1 file\n");
+					printf(">>");
 					exit(1);
 				}
 				for(int q=2; q<=last; q++){
@@ -153,22 +164,22 @@ int main(int argc, char const *argv[])
 				struct stat arg_last;
 				if(!stat(arglast, &arg_last)){
 					if(S_ISDIR(arg_last.st_mode)){
-						checklast=1;
+						checklast=1;   // check whether the last param is dir or not
 					}	
 				}
 				if(last>=3 && !checklast){
 					printf("ERROR: trying to copy multiple things to a file\n");
-					printf(">>");
-					exit(1);
+					printf(">>");  
+					exit(1);  // if last param is a file then usr is trying to copy multiple things into a file.
 				}
 				for(int q=1; q<last; q++){
 					struct stat arg_i;
 					if(!stat(parameters[q], &arg_i)){
 						if(S_ISDIR(arg_i.st_mode)){
-							if(checklast) copy_dir_to_dir(parameters[q], arglast);
+							if(checklast) copy_dir_to_dir(parameters[q], arglast);  // copy dir to dir
 						}
-						else if(checklast) copy_file_to_dir(parameters[q], arglast);
-						else if(!checklast) copy_file_to_file(parameters[q], arglast);
+						else if(checklast) copy_file_to_dir(parameters[q], arglast); // copy file to dir
+						else if(!checklast) copy_file_to_file(parameters[q], arglast); // copy file to file
 					}
 				}
 			}
@@ -202,7 +213,7 @@ int main(int argc, char const *argv[])
 					{
 						if (S_ISREG(statbuf.st_mode))
 						{
-							int d = remove(comp_file_name);
+							int d = remove(comp_file_name);  // if file remove directly
 							if(!d) printf("removed %s\n", comp_file_name);
 							else printf("couldn't remove %s\n", comp_file_name);
 						}
@@ -238,7 +249,6 @@ int main(int argc, char const *argv[])
 			else if(strcmp(command,"cd")){
 				system(str_command);
 			}
-			// printf("exiting the child\n");
 			printf(">>");
 			exit(0);
 		}
