@@ -8,7 +8,7 @@
 * mv (no flags) file to dir / files to dir / dir to dir
 * cp (no flags) file to file / files to dir/ dir to dir
 * pwd (no flags) dir
-* rm [-r] file(s) / dir(s)
+* rm [-r] file / dir
 * chmod (no flags)
 * mkdir (no flags) dir(s)
 
